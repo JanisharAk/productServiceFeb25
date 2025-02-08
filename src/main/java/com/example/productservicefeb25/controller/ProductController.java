@@ -4,6 +4,7 @@ import com.example.productservicefeb25.dto.ProductDTO;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,5 +41,12 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public void deleteProduct(@PathVariable("id") Long id) {
         productService.deleteProductById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ProductDTO updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
+        productDTO.setId(id); // Ensure the correct ID is set
+        //ProductDTO updatedProduct = productService.updateProduct(productDTO);
+        return productService.updateProduct(productDTO);
     }
 }
