@@ -2,13 +2,9 @@ package com.example.productservicefeb25.models;
 
 import jakarta.persistence.*;
 
-//@Entity
+@Entity
 
-//@Table(name = "products")
 public class Product extends BaseModel{
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //private Long id;
     private String name;
     private double price;
 
@@ -39,11 +35,4 @@ public class Product extends BaseModel{
         this.name = name;
     }
 
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
 }
