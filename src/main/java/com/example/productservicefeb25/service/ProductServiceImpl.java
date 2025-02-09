@@ -1,6 +1,7 @@
 package com.example.productservicefeb25.service;
 
 import com.example.productservicefeb25.dto.ProductDTO;
+import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,13 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO getProductById(Long id) {
+    public ProductDTO getProductById(Long id) throws ProductNotFoundException {
         Optional<ProductDTO> product = productRepository.findById(id);
-        return product.isPresent() ? product.get() : new ProductDTO();
+
+        if(product.isEmpty()) {  // Or: if (!product.isPresent())
+            throw new ProductNotFoundException("Product not found for id: " + id);
+        }
+        return product.get();
     }
 
     @Override

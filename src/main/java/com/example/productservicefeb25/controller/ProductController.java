@@ -1,9 +1,12 @@
 package com.example.productservicefeb25.controller;
 
+import com.example.productservicefeb25.dto.ExceptionDTO;
 import com.example.productservicefeb25.dto.ProductDTO;
+import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +31,7 @@ public class ProductController {
 
     // GET: Retrieve a product by ID
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable("id") Long id) {
+    public ProductDTO getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
         return productService.getProductById(id);
     }
 
@@ -49,4 +52,17 @@ public class ProductController {
         //ProductDTO updatedProduct = productService.updateProduct(productDTO);
         return productService.updateProduct(productDTO);
     }
+
+
+//    @ExceptionHandler(ProductNotFoundException.class)
+//    @ResponseStatus(HttpStatus.NOT_FOUND)//it changes the status in postman from 200ok to 404 not found
+//    @ResponseBody
+//    private ExceptionDTO handleProductNotFoundException(ProductNotFoundException e) {
+//        ExceptionDTO exceptionDTO = new ExceptionDTO();
+//        exceptionDTO.setMessage(e.getMessage());
+//        exceptionDTO.setStatus("Failure");
+//        return exceptionDTO;
+//        //here it is violating SRP so we need to create this in separate class called ProductControllerAdvice
+//
+//    }
 }
