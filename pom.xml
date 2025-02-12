@@ -66,6 +66,20 @@
             <artifactId>mysql-connector-java</artifactId>  <!-- ✅ Correct artifact ID -->
             <version>8.0.33</version>  <!-- You can keep version 8.x for stability -->
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>11.3.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-mysql -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+            <version>11.3.1</version>
+        </dependency>
+
+
 
 
     </dependencies>
