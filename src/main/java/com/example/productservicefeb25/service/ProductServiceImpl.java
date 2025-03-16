@@ -50,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         ProductDTO productDTO = new ProductDTO();
 
         // Store in Redis Cache
-        redisTemplate.opsForValue().set(id, productDTO);
+        redisTemplate.opsForHash().get(id, productDTO);
 
         return productDTO;
 
