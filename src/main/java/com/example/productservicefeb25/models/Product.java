@@ -2,9 +2,11 @@ package com.example.productservicefeb25.models;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
+
 @Entity
 
-public class Product extends BaseModel{
+public class Product extends BaseModel implements Serializable {
     private String name;
     private double price;
 

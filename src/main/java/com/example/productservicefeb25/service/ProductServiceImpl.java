@@ -4,6 +4,7 @@ import com.example.productservicefeb25.dto.ProductDTO;
 import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.repository.ProductRepository;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +14,11 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    public ProductServiceImpl(ProductRepository productRepository) {
+    private final RedisTemplate<Long, Object> redisTemplate;
+
+    public ProductServiceImpl(ProductRepository productRepository, RedisTemplate<Long, Object> redisTemplate) {
         this.productRepository = productRepository;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -28,12 +32,28 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductDTO getProductById(Long id) throws ProductNotFoundException {
-        Optional<ProductDTO> product = productRepository.findById(id);
 
-        if(product.isEmpty()) {  // Or: if (!product.isPresent())
+        // Check Redis Cache
+        ProductDTO cachedProduct = (ProductDTO) redisTemplate.opsForValue().get(id);
+        if (cachedProduct != null) {
+            return cachedProduct;
+        }
+
+
+        // Fetch from Database
+        Optional<ProductDTO> product = productRepository.findById(id);
+        if (product.isEmpty()) {
             throw new ProductNotFoundException("Product not found for id: " + id);
         }
-        return product.get();
+
+        // Convert Entity to DTO
+        ProductDTO productDTO = new ProductDTO();
+
+        // Store in Redis Cache
+        redisTemplate.opsForValue().set(id, productDTO);
+
+        return productDTO;
+
     }
 
     @Override
