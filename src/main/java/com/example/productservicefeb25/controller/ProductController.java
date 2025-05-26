@@ -1,13 +1,9 @@
 package com.example.productservicefeb25.controller;
 
-import com.example.productservicefeb25.dto.ExceptionDTO;
-import com.example.productservicefeb25.dto.ProductDTO;
 import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,20 +21,20 @@ public class ProductController {
 
     // GET: Retrieve all products
     @GetMapping
-    public List<ProductDTO> getAllProducts() {
+    public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 
     // GET: Retrieve a product by ID
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
+    public Product getProductById(@PathVariable("id") Long id) throws ProductNotFoundException {
         return productService.getProductById(id);
     }
 
     // POST: Add a new product
     @PostMapping
-    public ProductDTO addProduct(@RequestBody ProductDTO productDTO) {
-        return productService.saveProduct(productDTO);  //  Passed product to service method
+    public Product addProduct(@RequestBody Product product) {
+        return productService.saveProduct(product);  //  Passed product to service method
     }
 
     @DeleteMapping("/{id}")
@@ -47,10 +43,10 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ProductDTO updateProduct(@PathVariable("id") Long id, @RequestBody ProductDTO productDTO) {
-        productDTO.setId(id); // Ensure the correct ID is set
+    public Product updateProduct(@PathVariable("id") Long id, @RequestBody Product product) {
+        product.setId(id); // Ensure the correct ID is set
         //ProductDTO updatedProduct = productService.updateProduct(productDTO);
-        return productService.updateProduct(productDTO);
+        return productService.updateProduct(product);
     }
 
 

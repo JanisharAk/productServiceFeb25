@@ -1,6 +1,5 @@
 package com.example.productservicefeb25.controller;
 
-import com.example.productservicefeb25.dto.ProductDTO;
 import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.service.ProductService;
@@ -8,11 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.mockito.Mockito;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,10 +24,10 @@ class ProductControllerTest {
     @Mock
     private ProductService productService; //= Mockito.mock(ProductService.class);
 
-    private ProductDTO dummyDTO;
+    private Product dummyDTO;
     @BeforeEach
     void setUp() {
-        dummyDTO = new ProductDTO(); // Ensure dummyDTO is initialized before each test
+        dummyDTO = new Product(); // Ensure dummyDTO is initialized before each test
         dummyDTO.setId(1L);
         dummyDTO.setName("dummy");
     }
@@ -47,7 +42,7 @@ class ProductControllerTest {
         when(productService.getProductById(1L)).thenReturn(dummyDTO);
 
         // Act
-        ProductDTO result = productController.getProductById(1L);
+        Product result = productController.getProductById(1L);
 
         // Assert
         assertEquals(1L, result.getId());
@@ -61,10 +56,10 @@ class ProductControllerTest {
 //        dummyDTO.setId(1L);
 //        dummyDTO.setName("dummy");
 
-        List<ProductDTO> productList = Arrays.asList(dummyDTO);
+        List<Product> productList = Arrays.asList(dummyDTO);
         when(productService.getAllProducts()).thenReturn(productList);
 
-        List<ProductDTO> result = productController.getAllProducts();
+        List<Product> result = productController.getAllProducts();
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -79,7 +74,7 @@ class ProductControllerTest {
 //        dummyDTO.setName("dummy");
 
         when(productService.saveProduct(dummyDTO)).thenReturn(dummyDTO);
-        ProductDTO result = productController.addProduct(dummyDTO);
+        Product result = productController.addProduct(dummyDTO);
         assertNotNull(result);
         assertEquals(1L, result.getId());
     }
@@ -100,7 +95,7 @@ class ProductControllerTest {
 //        dummyDTO.setName("dummy");
 
         when(productService.updateProduct(dummyDTO)).thenReturn(dummyDTO);
-        ProductDTO result = productController.updateProduct(1L,dummyDTO);
+        Product result = productController.updateProduct(1L,dummyDTO);
         assertNotNull(result);
         assertEquals("dummy", result.getName());
     }

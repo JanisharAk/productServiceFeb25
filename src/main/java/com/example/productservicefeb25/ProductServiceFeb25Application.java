@@ -2,8 +2,10 @@ package com.example.productservicefeb25;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
+@EnableCaching
 public class ProductServiceFeb25Application {
 
     public static void main(String[] args) {

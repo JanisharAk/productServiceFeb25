@@ -1,13 +1,14 @@
 package com.example.productservicefeb25.service;
 
-import com.example.productservicefeb25.dto.ProductDTO;
 import com.example.productservicefeb25.exceptions.ProductNotFoundException;
 import com.example.productservicefeb25.models.Product;
 import com.example.productservicefeb25.repository.ProductRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,54 +23,46 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDTO> getAllProducts() {
-        List<ProductDTO> products = productRepository.findAll();
-        return products;
-//        return products.stream()
-//                .map(product -> new ProductDTO(product.getId(), product.getName(), product.getPrice()))
-//                .collect(Collectors.toList());
+    public List<Product> getAllProducts() {
+        return productRepository.findAll();
     }
-
+    @Cacheable(value = "products", key = "#id")
     @Override
-    public ProductDTO getProductById(Long id) throws ProductNotFoundException {
+    public Product getProductById(Long id) throws ProductNotFoundException {
 
         // Check Redis Cache
-        ProductDTO cachedProduct = (ProductDTO) redisTemplate.opsForValue().get(id);
+        Product cachedProduct = (Product) redisTemplate.opsForValue().get(id);
         if (cachedProduct != null) {
             return cachedProduct;
         }
 
 
-        // Fetch from Database
-        Optional<ProductDTO> product = productRepository.findById(id);
-        if (product.isEmpty()) {
-            throw new ProductNotFoundException("Product not found for id: " + id);
-        }
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found for id: " + id));
 
-        // Convert Entity to DTO
-        ProductDTO productDTO = new ProductDTO();
 
-        // Store in Redis Cache
-        redisTemplate.opsForHash().get(id, productDTO);
-
-        return productDTO;
+        redisTemplate.opsForValue().set(id, product);// cache the product
+        return product;
 
     }
-
+    @CachePut(value = "products", key = "#result.id")
     @Override
-    public ProductDTO saveProduct(ProductDTO productDTO) {
-        ProductDTO savedProduct = productRepository.save(productDTO);
+    public Product saveProduct(Product product) {
+        Product savedProduct = productRepository.save(product);
+        redisTemplate.opsForValue().set(savedProduct.getId(), savedProduct);  // Cache the saved product
         return savedProduct;
     }
-
+    @CacheEvict(value = "products", key = "#id")
     @Override
     public void deleteProductById(Long id) {
         productRepository.deleteById(id);
+        redisTemplate.delete(id);  // Clean cache on delete
     }
 
     @Override
-    public ProductDTO updateProduct(ProductDTO productDTO) {
-        ProductDTO updatedProduct = productRepository.save(productDTO);
+    public Product updateProduct(Product product) {
+        Product updatedProduct = productRepository.save(product);
+        redisTemplate.opsForValue().set(updatedProduct.getId(), updatedProduct);  // Update cache
         return updatedProduct;
     }
 }
