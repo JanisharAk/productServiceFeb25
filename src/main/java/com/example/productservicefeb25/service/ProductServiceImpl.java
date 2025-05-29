@@ -58,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
         redisTemplate.delete(id);  // Clean cache on delete
     }
-
+    @CachePut(value = "products", key = "#product.id")
     @Override
     public Product updateProduct(Product product) {
         Product updatedProduct = productRepository.save(product);
