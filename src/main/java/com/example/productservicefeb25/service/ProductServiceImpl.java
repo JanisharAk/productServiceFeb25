@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,10 +17,12 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final RedisTemplate<Long, Object> redisTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public ProductServiceImpl(ProductRepository productRepository, RedisTemplate<Long, Object> redisTemplate) {
+    public ProductServiceImpl(ProductRepository productRepository, RedisTemplate<Long, Object> redisTemplate, KafkaTemplate<String, String> kafkaTemplate) {
         this.productRepository = productRepository;
         this.redisTemplate = redisTemplate;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -29,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     @Cacheable(value = "products", key = "#id")
     @Override
     public Product getProductById(Long id) throws ProductNotFoundException {
-
+        kafkaTemplate.send("MyTopic", "Hello world");
         // Check Redis Cache
         Product cachedProduct = (Product) redisTemplate.opsForValue().get(id);
         if (cachedProduct != null) {
